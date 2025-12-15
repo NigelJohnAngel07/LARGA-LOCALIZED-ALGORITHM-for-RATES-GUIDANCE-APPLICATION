@@ -14,14 +14,6 @@ int main() {
     int choice;
     float fare;
 
-    printf("%.2f\n",round25cent(1.25));
-    printf("%.2f\n",round25cent(1.50));
-    printf("%.2f\n",round25cent(1.75));
-    printf("%.2f\n",round25cent(1.00));
-    printf("%.2f\n",round25cent(1.26));
-    printf("%.2f\n",round25cent(1.51));
-    printf("%.2f\n",round25cent(1.76));
-    printf("%.2f\n",round25cent(1.01));
     printf("LARGA: LOCALIZED ALGORITHM for RATES GUIDANCE APPLICATION\n");
     printf("Select Route");
 
@@ -65,3 +57,4 @@ int main() {
 
     return 0;
 }
+

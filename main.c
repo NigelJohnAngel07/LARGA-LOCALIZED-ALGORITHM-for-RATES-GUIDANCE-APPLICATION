@@ -13,28 +13,82 @@ int main() {
     int totalRoutes = 0;
     int choice;
     float fare;
+    int valid = 0;//for error handling
+    int maxOption = 2;
 
-    printf("LARGA: LOCALIZED ALGORITHM for RATES GUIDANCE APPLICATION\n");
+
+    printf("LARGA: LOCALIZED ALGORITHM for RATES GUIDANCE APPLICATION\n\n");
     printf("Select Route");
 
     Route *RouteSelection = loadRouteOptions("route_selection.csv", &totalRoutes);
 
     if (RouteSelection == NULL) return 1;
 
-    printf("\nChoose a route index: ");
-    scanf("%d", &choice);
-    while ((ch = getchar()) != '\n' && ch != EOF);
+    while (!valid) {
+        printf("\nChoose a route index (0-%d): ", maxOption);
+        if (scanf("%d", &choice) == 1) {
+            if (choice < 0) {
+                printf("Invalid input. The index cannot be negative.\n");
+            }
+            else if (choice > maxOption) {
+                printf("Invalid input. Please choose an index between 0 and %d.\n", maxOption);
+            }
+            else {
+                valid = 1;
+            }
+        } else {
+            printf("Invalid input. Please enter a number.\n");
+        }
+        while ((ch = getchar()) != '\n' && ch != EOF);
+    }
 
     strcpy(file, RouteSelection[choice].location_file);
     Data *Route = createArray(file, &record_count);
 
     displayList(Route, record_count);
-    printf("Origin: ");
-    scanf("%d", &origin_index);
-    while ((ch = getchar()) != '\n' && ch != EOF);
-    printf("Destination: ");
-    scanf("%d", &destination_index);
-    while ((ch = getchar()) != '\n' && ch != EOF);
+
+
+
+    while (1) {
+        printf("Origin (0-21): ");
+
+        if (scanf("%d", &origin_index) == 1) {
+            while ((ch = getchar()) != '\n' && ch != EOF);
+            if (origin_index >= 0 && origin_index <= 21) {
+                break;
+            } else {
+                printf("Invalid input. Please choose an index between 0 and 21.\n");
+            }
+        } else {
+            printf("Invalid input. Please enter a number.\n");
+            while ((ch = getchar()) != '\n' && ch != EOF);
+        }
+    }
+
+    while (1) { // Loop until valid input
+        printf("Destination (0-21): ");
+
+        // 1. Attempt to read an integer
+        if (scanf("%d", &destination_index) == 1) {
+
+            // 2. Immediately clear the buffer (removes '\n')
+            while ((ch = getchar()) != '\n' && ch != EOF);
+
+            // 3. STRICT RANGE CHECK: 0 to 21
+            if (destination_index >= 0 && destination_index <= 21) {
+                break; // Input is perfect. Exit the loop.
+            } else {
+                printf("Invalid input. Please choose an index between 0 and 21.\n");
+            }
+
+        } else {
+            // 4. Input was text/garbage
+            printf("Invalid input. Please enter a number.\n");
+
+            // Clear the garbage text from the buffer
+            while ((ch = getchar()) != '\n' && ch != EOF);
+        }
+    }
 
     origin_location_ID = Route[origin_index].location_ID;
     destination_location_ID = Route[destination_index].location_ID;

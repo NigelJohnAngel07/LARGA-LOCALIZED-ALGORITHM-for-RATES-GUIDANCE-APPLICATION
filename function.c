@@ -1,28 +1,5 @@
 #include "route.h"
 
-float round25cent(float value) {
-    // Multiply by 100 to work with whole numbers (centavos)
-    // Adding 0.5 before casting helps prevent floating-point precision errors
-    int totalCentavos = (int)(value * 100 + 0.5);
-
-    int pesos = totalCentavos / 100;
-    int centavos = totalCentavos % 100;
-
-    if (centavos > 0 && centavos <=25) {
-        centavos = 25;
-    } else if (centavos > 25 && centavos <= 50) {
-        centavos = 50;
-    } else if (centavos > 50 && centavos <= 75) {
-        centavos = 75;
-    } else if (centavos > 75) {
-        centavos = 0;
-        pesos += 1; // Carry over to the next peso
-    }
-
-    // Use 100.0 to ensure floating point division
-    return pesos + (centavos / 100.0f);
-}
-
 Route* loadRouteOptions(char *masterFile, int *count) {
     FILE *file = fopen(masterFile, "r");
     if (file == NULL) {
@@ -185,8 +162,6 @@ float calculateFare(int distance) {
         fare = 13.00 + ((distance - 4) * 1.8);
     }
 
-    fare = round25cent(fare);
-
     // 2. Discount Logic
     printf("Are you a student / elderly / disabled? (y/n): ");
     scanf(" %c", &choice);
@@ -197,7 +172,8 @@ float calculateFare(int distance) {
 
         printf("Discounted fare applied.\n");
     }
-    printf("Fare: %f",fare);
+
+    fare = round(fare * 4) / 4;
 
     return fare;
 }

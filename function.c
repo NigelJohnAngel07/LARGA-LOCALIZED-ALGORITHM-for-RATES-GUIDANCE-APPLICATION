@@ -1,4 +1,44 @@
 #include "route.h"
+#define WIDTH 57
+
+void Line(){    // prints a dash line
+    for (int i = 0; i < WIDTH; i++){
+        printf("-");
+    }
+     printf("\n");
+}
+
+void ReceiptHead(){
+    printf("%*s\n", WIDTH / 2 + (int)strlen("JEEPNEY TRIP RECEIPT") / 2, "JEEPNEY TRIP RECEIPT");
+}
+
+void ExitMessage(){
+    printf("%*s\n", WIDTH / 2 + (int)strlen("Thank you for riding! Keep safe!") / 2, "Thank you for riding! Keep safe!");
+}
+
+
+float round25cent(float value) {
+    // Multiply by 100 to work with whole numbers (centavos)
+    // Adding 0.5 before casting helps prevent floating-point precision errors
+    int totalCentavos = (int)(value * 100 + 0.5);
+
+    int pesos = totalCentavos / 100;
+    int centavos = totalCentavos % 100;
+
+    if (centavos > 0 && centavos <=25) {
+        centavos = 25;
+    } else if (centavos > 25 && centavos <= 50) {
+        centavos = 50;
+    } else if (centavos > 50 && centavos <= 75) {
+        centavos = 75;
+    } else if (centavos > 75) {
+        centavos = 0;
+        pesos += 1; // Carry over to the next peso
+    }
+
+    // Use 100.0 to ensure floating point division
+    return pesos + (centavos / 100.0f);
+}
 
 Route* loadRouteOptions(char *masterFile, int *count) {
     FILE *file = fopen(masterFile, "r");
@@ -107,25 +147,29 @@ Data* createArray(char routefile[50], int *count) {
     return Route; // Return the pointer to the array
 }
 
+char locHead[] = "Location Name";
 void displayList(Data *Route, int total_records) {
     if (Route == NULL || total_records == 0) {
         printf("The list is empty.\n");
         return;
     }
 
-    printf("\n--- List Contents ---\n");
-    printf("| Index | Location ID | Location Name                          |\n");
-    printf("|-------|-------------|----------------------------------------|\n");
+    Line();
+    printf("| Index | %-45s |\n", locHead);
+    Line();
 
     for (int i = 0; i < total_records; i++) {
-        printf("| %5d | %11d | %-38s |\n",
+        printf("| %5d | %-45s |\n",
                i,
-               Route[i].location_ID,
                Route[i].location_name);
     }
 
-    printf("----------------------------------------------------------------\n");
+
+    Line();
+
 }
+
+
 
 int calculateMinDistance(Data *Route, int record_count, int origin_ID, int dest_ID) {
     // Initialize with a value larger than any possible distance
@@ -162,9 +206,22 @@ float calculateFare(int distance) {
         fare = 13.00 + ((distance - 4) * 1.8);
     }
 
+    fare = round25cent(fare);
+
     // 2. Discount Logic
-    printf("Are you a student / elderly / disabled? (y/n): ");
-    scanf(" %c", &choice);
+    while (1) {
+        int ch;
+        printf("Are you a student / elderly / disabled? (y/n): ");
+
+        scanf(" %c", &choice);
+        while ((ch = getchar()) != '\n' && ch != EOF);
+
+        if (choice == 'y' || choice == 'Y' || choice == 'n' || choice == 'N') {
+            break;
+        } else {
+            printf("Invalid input. Please enter 'y' for Yes or 'n' for No.\n");
+        }
+    }
 
     if (choice == 'y' || choice == 'Y') {
         // Apply 20% discount
@@ -173,32 +230,25 @@ float calculateFare(int distance) {
         printf("Discounted fare applied.\n");
     }
 
-    fare = round(fare * 4) / 4;
-
     return fare;
 }
 
 void displayReceipt(Data *Route, int origin_index, int destination_index, int distance, float fare) {
-    printf("\n================================================================\n");
-    printf("                       JEEPNEY TRIP RECEIPT                     \n");
-    printf("----------------------------------------------------------------\n");
+    Line();
+    ReceiptHead();
+    Line();
 
     // Display Origin Details
-    printf("Origin:         [%d] %-30s (ID: %d)\n",
-           origin_index,
-           Route[origin_index].location_name,
-           Route[origin_index].location_ID);
+    printf("Origin:      %-25s\n", Route[origin_index].location_name);
 
     // Display Destination Details
-    printf("Destination:    [%d] %-30s (ID: %d)\n",
-           destination_index,
-           Route[destination_index].location_name,
-           Route[destination_index].location_ID);
+    printf("Destination: %-30s\n", Route[destination_index].location_name);
 
-    printf("----------------------------------------------------------------\n");
-    printf("Distance:       %d stops (approx. %d km)\n", distance, distance);
+    Line();
+    printf("Distance:       %d km\n", distance, distance);
     printf("Total Fare:     PHP %.2f\n", fare);
-    printf("================================================================\n");
-    printf("              Thank you for riding! Keep safe!                  \n");
-    printf("================================================================\n\n");
+    Line();
+    ExitMessage();
+    Line();
+    printf("\n");
 }

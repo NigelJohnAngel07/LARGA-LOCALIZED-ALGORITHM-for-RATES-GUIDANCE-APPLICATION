@@ -5,44 +5,63 @@
 
 int main() {
     int distance = 0;
-    int origin_location_ID = 113;
-    int origin_index,i,destination_index;
-    int destination_location_ID = 100;
-    char routefile[] = "locations.csv";
+    int origin_location_ID;
+    int origin_index,i,destination_index,ch,route_index;
+    int destination_location_ID;
+    char file[50];
     int record_count = 0;
+    int totalRoutes = 0;
+    int choice;
+    float fare;
 
-    Data *Route = createArray(routefile,&record_count);
-    // Display the list
+    printf("%.2f\n",round25cent(1.25));
+    printf("%.2f\n",round25cent(1.50));
+    printf("%.2f\n",round25cent(1.75));
+    printf("%.2f\n",round25cent(1.00));
+    printf("%.2f\n",round25cent(1.26));
+    printf("%.2f\n",round25cent(1.51));
+    printf("%.2f\n",round25cent(1.76));
+    printf("%.2f\n",round25cent(1.01));
+    printf("LARGA: LOCALIZED ALGORITHM for RATES GUIDANCE APPLICATION\n");
+    printf("Select Route");
+
+    Route *RouteSelection = loadRouteOptions("route_selection.csv", &totalRoutes);
+
+    if (RouteSelection == NULL) return 1;
+
+    printf("\nChoose a route index: ");
+    scanf("%d", &choice);
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+    strcpy(file, RouteSelection[choice].location_file);
+    Data *Route = createArray(file, &record_count);
+
     displayList(Route, record_count);
+    printf("Origin: ");
+    scanf("%d", &origin_index);
+    while ((ch = getchar()) != '\n' && ch != EOF);
+    printf("Destination: ");
+    scanf("%d", &destination_index);
+    while ((ch = getchar()) != '\n' && ch != EOF);
 
-    printf("%d\n",record_count);
-
-    int min_distance = record_count; // Start with the maximum possible stops
-
-    for (int i = 0; i < record_count; i++) {
-        if (Route[i].location_ID == origin_location_ID) {
-
-            for (int j = 0; j < record_count; j++) {
-                if (Route[j].location_ID == destination_location_ID) {
-
-                    // One-way Circular Math:
-                    // This formula always calculates the distance MOVING FORWARD
-                    int current_dist = (j - i + record_count) % record_count;
-
-                    // We still want the "shortest" because there are multiple
-                    // instances of the same ID in your CSV.
-                    if (current_dist < min_distance) {
-                        min_distance = current_dist;
-                    }
-                }
-            }
-        }
-    }
-
-    printf("The shortest distance in this one-way loop is %d km.\n", min_distance);
+    origin_location_ID = Route[origin_index].location_ID;
+    destination_location_ID = Route[destination_index].location_ID;
 
     free(Route);
+
+    strcpy(file, RouteSelection[choice].route_file);
+
+    Route = createArray(file,&record_count);
+
+    distance = calculateMinDistance(Route, record_count, origin_location_ID, destination_location_ID);
+    fare = calculateFare(distance);
+
+    displayReceipt(Route, origin_index, destination_index,distance, fare);
+
+    free(Route);
+    free(RouteSelection);
     Route = NULL;
+    RouteSelection = NULL;
 
     return 0;
 }

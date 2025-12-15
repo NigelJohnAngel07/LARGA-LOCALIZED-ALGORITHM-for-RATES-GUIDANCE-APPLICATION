@@ -30,6 +30,5 @@ void displayList(Data *Route, int total_records);
 int calculateMinDistance(Data *Route, int record_count, int origin_ID, int dest_ID);
 float calculateFare(int distance);
 void displayReceipt(Data *Route, int origin_idx, int dest_idx, int distance, float fare);
-float round25cent(float value);
 
 #endif // ARRAY_H_INCLUDED

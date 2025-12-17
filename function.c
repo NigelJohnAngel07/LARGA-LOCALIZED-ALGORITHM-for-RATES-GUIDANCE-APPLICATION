@@ -237,9 +237,10 @@ void handleExit(char choice) {
 
         if (confirm == 'Y' || confirm == 'y') {
             Line();
-            printf("Program terminated successfully. Goodbye!");
+            printf("Program terminated successfully. Goodbye!\n");
             Line();
             exit(0);
         }
     }
 }
+

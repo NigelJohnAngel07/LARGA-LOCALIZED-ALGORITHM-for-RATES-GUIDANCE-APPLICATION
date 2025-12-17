@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1765941366 source:c:\users\user\documents\programming files\code blocks\larga\larga\function.c
+	"route.h"
+
+1765941050 c:\users\user\documents\programming files\code blocks\larga\larga\route.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+
+1765941280 source:c:\users\user\documents\programming files\code blocks\larga\larga\main.c
+	"route.h"
+

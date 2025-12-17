@@ -22,13 +22,16 @@ typedef struct {
 } Route;
 
 // Function Prototypes (Declarations)
-// These tell the compiler what the functions look like
 
+void Line();
+void ReceiptHead();
+void ExitMessage();
 Route* loadRouteOptions(char *masterFile, int *count);
 Data* createArray(char routefile[50], int *count);
 void displayList(Data *Route, int total_records);
 int calculateMinDistance(Data *Route, int record_count, int origin_ID, int dest_ID);
 float calculateFare(int distance);
 void displayReceipt(Data *Route, int origin_idx, int dest_idx, int distance, float fare);
+void handleExit(char choice);
 
 #endif // ARRAY_H_INCLUDED

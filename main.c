@@ -13,11 +13,13 @@ int main() {
     int totalRoutes = 0;
     int choice;
     float fare;
-    int valid = 0;//for error handling
+    char input[10];
     int maxOption = 2;
 
 
     printf("LARGA: LOCALIZED ALGORITHM for RATES GUIDANCE APPLICATION\n\n");
+    while (1){
+    int valid = 0;
     printf("Select Route");
 
     Route *RouteSelection = loadRouteOptions("route_selection.csv", &totalRoutes);
@@ -25,22 +27,34 @@ int main() {
     if (RouteSelection == NULL) return 1;
 
     while (!valid) {
-        printf("\nChoose a route index (0-%d): ", maxOption);
-        if (scanf("%d", &choice) == 1) {
-            if (choice < 0) {
-                printf("Invalid input. The index cannot be negative.\n");
-            }
-            else if (choice > maxOption) {
-                printf("Invalid input. Please choose an index between 0 and %d.\n", maxOption);
-            }
-            else {
-                valid = 1;
-            }
-        } else {
-            printf("Invalid input. Please enter a number.\n");
+    printf("\nChoose a route index (0-%d) or 'x' to exit: ", maxOption);
+
+    if (scanf("%s", input) == 1) {
+        if (input[0] == 'x' || input[0] == 'X') {
+            handleExit(input[0]);
+            continue;
         }
-        while ((ch = getchar()) != '\n' && ch != EOF);
+        choice = atoi(input);
+
+        if (choice == 0 && input[0] != '0') {
+            printf("Invalid input. Please enter a valid number or 'x'.\n");
+        }
+        else if (choice < 0) {
+            printf("Invalid input. The index cannot be negative.\n");
+        }
+        else if (choice > maxOption) {
+            printf("Invalid input. Please choose an index between 0 and %d.\n", maxOption);
+        }
+        else {
+            valid = 1;
+        }
+    } else {
+        printf("Invalid input. Please enter a number.\n");
     }
+
+    // Clear buffer
+    while ((ch = getchar()) != '\n' && ch != EOF);
+}
 
     strcpy(file, RouteSelection[choice].location_file);
     Data *Route = createArray(file, &record_count);
@@ -106,9 +120,8 @@ int main() {
 
     free(Route);
     free(RouteSelection);
-    Route = NULL;
-    RouteSelection = NULL;
-
+    printf("\nReturning to Main Menu...\n");
+    }
     return 0;
 }
 

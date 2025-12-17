@@ -205,7 +205,7 @@ float calculateFare(int distance) {
     }
 
     fare = round(fare * 4) / 4;
-    
+
     return fare;
 }
 
@@ -229,3 +229,17 @@ void displayReceipt(Data *Route, int origin_index, int destination_index, int di
     printf("\n");
 }
 
+void handleExit(char choice) {
+    if (choice == 'x' || choice == 'X') {
+        char confirm;
+        printf("\nDo you wish to exit the program? (Y/N): ");
+        scanf(" %c", &confirm);
+
+        if (confirm == 'Y' || confirm == 'y') {
+            Line();
+            printf("Program terminated successfully. Goodbye!");
+            Line();
+            exit(0);
+        }
+    }
+}
